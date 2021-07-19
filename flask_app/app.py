@@ -1,21 +1,13 @@
-from flask import Flask, request, jsonify, make_response
-import os
-from flask_pymongo import PyMongo 
-
+from flask import Flask, request, jsonify, url_for
+from flask_cors import CORS
 import random
 import string
+import os
 import numpy as np
-import csv
-import pandas as pd 
 
-
-if os.path.exists("env.py"):
-      import env 
 
 app = Flask(__name__)
-app.config["MONGO_DBNAME"] = 'files'
-app.config["MONGO_URI"] = os.getenv("MONGO_URI")
-mongo = PyMongo(app)
+CORS(app)
 
 uploads_dir = os.path.join(app.instance_path, 'uploads')
 
@@ -23,14 +15,15 @@ uploads_dir = os.path.join(app.instance_path, 'uploads')
 def get():
     if request.method == 'GET':
 
-        file = []
+        arr_file = []
+        arr_size = 2048
         size = 0
         countRandomDecimal = 0
         countRandomalphanumerics = 0
         countInteger = 0
         countRandomString = 0
 
-        while size < 2048:
+        while size < arr_size:
             random_choice = random.randrange(4)
             if random_choice == 0:
                 i = ''.join(random.choices(string.ascii_lowercase, k = random.randint(5,20)))
@@ -44,17 +37,17 @@ def get():
             if random_choice == 3:
                 i = random.uniform(1, 20)
                 countRandomDecimal += 1
-            file.append(i)
-            size += np.array(file.index(i)).nbytes
-
-        dataframe = pd.DataFrame(file)
-        file_path = "/Users/besher/Desktop/projects/generate170721/flask_app/instance/uploads/file.csv"
-        dataframe.to_csv(file_path,index=None,header=None)
-
+            arr_file.append(i)
+            size += np.array(arr_file.index(i)).nbytes
+        file_path = os.path.join(uploads_dir,"file.txt")
+        np.savetxt(file_path,
+            [arr_file],
+            delimiter =",", 
+            fmt ='% s')
 
     return jsonify({
         "message": "file uploaded",
-        "filePath": file_path,
+        "filePath": file_path ,
         "countRandomDecimal":countRandomDecimal,
         "countRandomalphanumerics":countRandomalphanumerics,
         "countInteger":countInteger,
@@ -62,4 +55,4 @@ def get():
     })
     
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=105)
+    app.run(host='127.0.0.1', port=8000)
