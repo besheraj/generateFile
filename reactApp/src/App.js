@@ -8,7 +8,7 @@ function App() {
   const [report, setReport] = useState(false);
 
   const generateCSVFile = async () => {
-    const res = await fetch("http://127.0.0.1:8000/get", {
+    const res = await fetch("http://127.0.0.1:5000/get", {
       method: "GET",
       headers: {
         "Content-type": "application/json",
