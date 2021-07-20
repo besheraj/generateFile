@@ -21,7 +21,7 @@ def get():
     if request.method == 'GET':
 
         arr_file = []
-        arr_size = 2048
+        arr_size = 2097152
         size = 0
         countRandomDecimal = 0
         countRandomalphanumerics = 0
@@ -42,8 +42,9 @@ def get():
             if random_choice == 3:
                 i = random.uniform(1, 20)
                 countRandomDecimal += 1
-            arr_file.append(i)
-            size += np.array(arr_file.index(i)).nbytes
+            arr_file.insert(0,i)
+            size += arr_file[0].__sizeof__()
+
         file_path = os.path.join(uploads_dir,"file.txt")
         np.savetxt(file_path,
             [arr_file],
