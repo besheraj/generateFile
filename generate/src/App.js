@@ -37,7 +37,7 @@ function App() {
       </div>
       <div className="center">
         {generate && info ? (
-          <a href={filePath} target="_blank" download>
+          <a href={filePath} download>
             Download
           </a>
         ) : null}

@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, url_for
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import random
 import string
@@ -10,6 +10,11 @@ app = Flask(__name__)
 CORS(app)
 
 uploads_dir = os.path.join(app.instance_path, 'uploads')
+
+@app.route('/get-files/<path:filename>',methods = ['GET','POST'])
+def download_file(filename):
+    return send_from_directory(uploads_dir,
+                               filename, as_attachment=True)
 
 @app.route('/get', methods=['GET'])
 def get():
@@ -44,10 +49,13 @@ def get():
             [arr_file],
             delimiter =",", 
             fmt ='% s')
+           
+        download_file("file.txt")
+
 
     return jsonify({
         "message": "file uploaded",
-        "filePath": file_path ,
+        "filePath": "http://localhost:8000/get-files/file.txt",
         "countRandomDecimal":countRandomDecimal,
         "countRandomalphanumerics":countRandomalphanumerics,
         "countInteger":countInteger,
